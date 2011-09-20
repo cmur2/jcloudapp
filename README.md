@@ -1,14 +1,19 @@
 JCloudApp
 =========
 
+JCloudApp is inspired by [GloudApp](https://github.com/cmur2/gloudapp) and
+provides similar feature set including taking screenshots and uploading files
+to [CloudApp](http://getcloudapp.com/) via a status or tray icon. It runs on
+all major platforms like Windows, Mac OS and Linux.
+
 Libraries
 ---------
 
 JCloudApp builds on top of some good libraries:
 
-- https://github.com/simong/CloudAppJava
-- https://github.com/douglascrockford/JSON-java
-- https://hc.apache.org/
+- [slightly modified CloudAppJava](https://github.com/simong/CloudAppJava)
+- [JSON for Java](https://github.com/douglascrockford/JSON-java)
+- [HttpComponents](https://hc.apache.org/)
 
 Thanks
 ------
