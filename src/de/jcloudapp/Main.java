@@ -19,7 +19,7 @@
  * information.
  */
 
-package jcloudapp;
+package de.jcloudapp;
 
 import com.cloudapp.rest.CloudApi;
 import com.cloudapp.rest.CloudApiException;
