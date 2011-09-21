@@ -7,7 +7,7 @@ set ARGS=me there
 
 set CLASSPATH=build/classes/;libs/*
 set DARGS=-Xms16m -Xmx64m
-set MAINCLASS=jcloudapp.Main
+set MAINCLASS=de.jcloudapp.Main
 
 start javaw -cp %CLASSPATH% %DARGS% %MAINCLASS% %ARGS%
 
