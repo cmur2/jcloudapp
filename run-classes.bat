@@ -3,10 +3,10 @@
 @setlocal
 
 rem username and password here:
-set ARGS=me there
+set ARGS=
 
 set CLASSPATH=build/classes/;libs/*
-set DARGS=-Xms16m -Xmx64m
+set DARGS=-Xms16m -Xmx64m -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
 set MAINCLASS=de.jcloudapp.Main
 
 start javaw -cp %CLASSPATH% %DARGS% %MAINCLASS% %ARGS%

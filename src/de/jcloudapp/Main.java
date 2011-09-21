@@ -71,7 +71,8 @@ public class Main {
     
     public static void main(String[] args) throws Exception {
         if(args.length != 2) {
-            showErrorDialog("Username and password should be given as command line arguments!");
+            showErrorDialog("Username and password should be given as command line arguments!\n"
+                + "Please add them in the 'run-classes' start script for your OS.");
             System.exit(1);
         }
         new Main(args[0], args[1]);
