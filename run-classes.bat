@@ -5,7 +5,7 @@
 rem username and password here:
 set ARGS=
 
-set CLASSPATH=build/classes/;libs/*
+set CLASSPATH=bin/;libs/*
 set DARGS=-Xms16m -Xmx64m -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
 set MAINCLASS=de.jcloudapp.Main
 

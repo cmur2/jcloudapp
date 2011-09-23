@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Use this script with 'ant -f build-jcloudapp.xml'.
+-->
+<project name="JCloudApp" default="default" basedir=".">
+    <description>Builds the project JCloudApp</description>
+
+    <fail message="Please build using Ant 1.7.1 or higher.">
+        <condition>
+            <not>
+                <antversion atleast="1.7.1"/>
+            </not>
+        </condition>
+    </fail>
+    
+    <target name="default" depends="build" description="Builds the whole project"/>
+
+    <target name="init">
+        <property name="build.dir" value="bin"/>
+        <property name="lib.dir" value="libs"/>
+        <property name="src.dir" value="src"/>
+
+        <path id="classpath">
+            <fileset dir="${lib.dir}">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+    </target>
+    
+    <target name="build" depends="init,clean" description="Builds application">
+        <mkdir dir="${build.dir}"/>
+
+        <javac srcdir="${src.dir}"
+               destdir="${build.dir}"
+               debug="false"
+               deprecation="true"
+               optimize="true"
+               includeAntRuntime="false">
+            <classpath refid="classpath"/>
+        </javac>
+
+        <copy todir="${build.dir}">
+            <fileset dir="${src.dir}">
+                <include name="**/*.properties"/>
+                <include name="**/*.gif"/>
+                <include name="**/*.png"/>
+                <include name="**/*.xml"/>
+                <include name="**/*.ini"/>
+                <include name="**/*.jpeg"/>
+            </fileset>
+        </copy>
+    </target>
+    
+    <target name="clean" depends="init" description="Removes build files">
+        <delete dir="${build.dir}"/>
+    </target>
+</project>
