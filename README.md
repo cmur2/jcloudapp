@@ -8,6 +8,20 @@ all major platforms like Windows, Mac OS and Linux.
 
 **[Works with regenwolken](https://github.com/posativ/regenwolken)**
 
+Install
+-------
+
+JCloudApp needs no real installation just clone [this](https://github.com/cmur2/jcloudapp)
+repository and run in order to compile:
+
+    ant -f build-jcloudapp.xml
+
+(All necessary libraries are shipped in the 'libs' directory of this repository.)
+
+To run JCloudApp use 'run-classes.sh' or 'run-classes.bat' depending on your OS.
+
+Pre-compiled downloads will follow soon for bigger releases.
+
 Libraries
 ---------
 
