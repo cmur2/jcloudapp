@@ -6,6 +6,8 @@ provides similar feature set including taking screenshots and uploading files
 to [CloudApp](http://getcloudapp.com/) via a status or tray icon. It runs on
 all major platforms like Windows, Mac OS and Linux.
 
+**[Works with regenwolken](https://github.com/posativ/regenwolken)**
+
 Libraries
 ---------
 
