@@ -25,6 +25,8 @@ package com.cloudapp.rest;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -42,7 +44,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
-import org.apache.http.entity.mime.FormBodyPart;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
@@ -140,7 +141,9 @@ public class CloudApi {
    */
   public JSONObject uploadFile(File file) throws CloudApiException {
     try {
-      CloudAppInputStream input = new CloudAppInputStream(file);
+      FileNameMap map = URLConnection.getFileNameMap();
+      String type = map.getContentTypeFor(file.getName());
+      CloudAppInputStream input = new CloudAppInputStream(file, type);
       return uploadFile(input);
     } catch (FileNotFoundException e) {
       LOGGER.log(Level.WARNING, "The provided file could not be found.", e);

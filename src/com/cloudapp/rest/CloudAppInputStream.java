@@ -48,6 +48,10 @@ public class CloudAppInputStream extends InputStreamBody {
     this(new FileInputStream(file), file.getName(), file.length());
   }
 
+  protected CloudAppInputStream(File file, String mimeType) throws FileNotFoundException {
+    this(new FileInputStream(file), mimeType, file.getName(), file.length());
+  }
+
   @Override
   public long getContentLength() {
     return length;
