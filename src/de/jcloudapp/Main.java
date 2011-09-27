@@ -21,9 +21,6 @@
 
 package de.jcloudapp;
 
-import com.cloudapp.rest.CloudApi;
-import com.cloudapp.rest.CloudApiException;
-import com.cloudapp.rest.CloudAppInputStream;
 import java.awt.AWTException;
 import java.awt.Dialog;
 import java.awt.FileDialog;
@@ -51,12 +48,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.cloudapp.rest.CloudApi;
+import com.cloudapp.rest.CloudApiException;
+import com.cloudapp.rest.CloudAppInputStream;
 
 /**
  * @author Ch. Nicolai
@@ -75,7 +76,8 @@ public class Main {
                 + "Please add them in the 'run-classes' start script for your OS.");
             System.exit(1);
         }
-        new Main(args[0], args[1]);
+        Main m = new Main(args[0], args[1]);
+        m.run();
     }
     
     private CloudApi client;
@@ -87,7 +89,9 @@ public class Main {
     
     public Main(String user, String pwd) {
         client = new CloudApi(user, pwd);
-        
+    }
+    
+    public void run() {
         try {
             client.getItems(1, 1, null, false);
         } catch(CloudApiException ex) {
@@ -197,6 +201,7 @@ public class Main {
         }
     }
     
+    @SuppressWarnings("unchecked")
     public void doUploadClip() {
         Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable t = cb.getContents(null);
