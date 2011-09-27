@@ -247,8 +247,10 @@ public class Main {
     public void doUpload() {
         FileDialog dlg = new FileDialog((Dialog)null, "Upload...");
         dlg.setVisible(true);
-        if(dlg.getFile() == null) { return; }
-        File f = new File(dlg.getFile());
+        if(dlg.getDirectory() == null || dlg.getFile() == null) {
+            return;
+        }
+        File f = new File(dlg.getDirectory()+File.separator+dlg.getFile());
         if(f.exists()) {
             setImageWorking();
             JSONObject drop = upload(f);
