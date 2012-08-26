@@ -143,6 +143,9 @@ public class CloudApi {
     try {
       FileNameMap map = URLConnection.getFileNameMap();
       String type = map.getContentTypeFor(file.getName());
+      if (type == null) {
+    	type = "application/octet-stream";
+      }
       CloudAppInputStream input = new CloudAppInputStream(file, type);
       return uploadFile(input);
     } catch (FileNotFoundException e) {
