@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Use this script with 'ant -f build-jcloudapp.xml'.
+    Use this script with 'ant -f build.xml' or simply 'ant'.
 -->
-<project name="JCloudApp" default="default" basedir=".">
+<project name="JCloudApp" default="default" basedir="."
+    xmlns:ivy="antlib:org.apache.ivy.ant">
     <description>Builds the project JCloudApp</description>
 
     <fail message="Please build using Ant 1.7.1 or higher.">
@@ -26,6 +27,20 @@
             </fileset>
         </path>
     </target>
+
+    <target name="resolve" depends="init" description="Retrieve dependencies">
+        <mkdir dir="${lib.dir}"/>
+        
+        <ivy:retrieve pattern="${lib.dir}/[artifact]-[revision]-[type].[ext]"/>
+    </target>
+
+    <target name="report" depends="init,resolve" description="Dependency report">
+        <ivy:report xsl="true"
+                outputpattern="[organisation]-[module]-[conf]-report.[ext]"
+                conf="default"
+                organisation="de.jcloudapp"
+                module="jcloudapp"/>
+    </target>
     
     <target name="build" depends="init,clean" description="Builds application">
         <mkdir dir="${build.dir}"/>
@@ -41,12 +56,8 @@
 
         <copy todir="${build.dir}">
             <fileset dir="${src.dir}">
-                <include name="**/*.properties"/>
-                <include name="**/*.gif"/>
-                <include name="**/*.png"/>
-                <include name="**/*.xml"/>
-                <include name="**/*.ini"/>
-                <include name="**/*.jpeg"/>
+                <!-- ignore source code -->
+                <exclude name="**/*.java"/>
             </fileset>
         </copy>
     </target>

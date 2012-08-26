@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="de.jcloudapp" module="jcloudapp"/>
+    <publications>
+        <!-- no artifacts -->
+    </publications>
+    <dependencies>
+        <dependency org="org.apache.httpcomponents" name="httpclient" rev="4.1.2"/>
+        <dependency org="org.apache.httpcomponents" name="httpmime" rev="4.1.2"/>
+        
+        <dependency org="commons-logging" name="commons-logging" rev="1.1.1" conf="*->*,!optional"/>
+
+        <!-- strip all Javadoc, since we have sources -->
+        <exclude org="*" ext="*" type="javadoc"/>
+    </dependencies>
+</ivy-module>
