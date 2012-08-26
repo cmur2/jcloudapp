@@ -230,7 +230,14 @@ public class Main {
             }
         }
         else if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-        	// TODO: clipboard string flavor
+        	try {
+        		String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+        		uploadStringFromClipboard(data);
+        	} catch(UnsupportedFlavorException ex) {
+                return;
+            } catch(IOException ex) {
+                return;
+            }
         }
     }
     
@@ -322,6 +329,25 @@ public class Main {
             
             setImageWorking();
             JSONObject drop = client.uploadFile(new CloudAppInputStream(bais, "image/png", filename, image.length));
+            String url = getDropUrl(drop);
+            System.out.println("Upload complete, URL:\n"+url);
+            setClipboard(url);
+            setImageNormal();
+            icon.displayMessage("Upload finished", String.format("Item: %s", filename), TrayIcon.MessageType.INFO);
+        } catch(IOException ex) {
+            System.out.println(ex);
+        } catch(CloudApiException ex) {
+            icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
+        }
+    }
+    
+    private void uploadStringFromClipboard(String s) {
+    	try {
+    		ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("utf-8"));
+    		String filename = String.format("Snippet %s.txt", df.format(new Date()));
+    		
+    		setImageWorking();
+            JSONObject drop = client.uploadFile(new CloudAppInputStream(bais, "text/plain", filename, bais.available()));
             String url = getDropUrl(drop);
             System.out.println("Upload complete, URL:\n"+url);
             setClipboard(url);
