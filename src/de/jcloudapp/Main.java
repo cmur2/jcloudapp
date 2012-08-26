@@ -205,15 +205,37 @@ public class Main {
     public void doUploadClip() {
         Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable t = cb.getContents(null);
-        List<File> data = null;
-        try {
-            data = (List<File>) t.getTransferData(DataFlavor.javaFileListFlavor);
-        } catch(UnsupportedFlavorException ex) {
-            return;
-        } catch(IOException ex) {
-            return;
+        
+        if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+        	try {
+        		List<File> data = (List<File>) 
+        				t.getTransferData(DataFlavor.javaFileListFlavor);
+        		uploadFilesFromClipboard(data);
+        		return;
+        	} catch(UnsupportedFlavorException ex) {
+                return;
+            } catch(IOException ex) {
+                return;
+            }
         }
-        if(data != null && data.size() > 0) {
+        else if(t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
+        	try {
+        		Image data = (Image) t.getTransferData(DataFlavor.imageFlavor);
+        		BufferedImage bi = (BufferedImage) data;
+        		uploadImageFromClipboard(bi);
+        	} catch(UnsupportedFlavorException ex) {
+                return;
+            } catch(IOException ex) {
+                return;
+            }
+        }
+        else if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+        	// TODO: clipboard string flavor
+        }
+    }
+    
+    private void uploadFilesFromClipboard(List<File> data) {
+    	if(data != null && data.size() > 0) {
             setImageWorking();
             ArrayList<String> urls = new ArrayList<String>();
             for(File f : data) {
@@ -246,6 +268,29 @@ public class Main {
             }
             setImageNormal();
             icon.displayMessage("Upload finished", msg, TrayIcon.MessageType.INFO);
+        }
+    }
+    
+    private void uploadImageFromClipboard(BufferedImage bi) {
+    	try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(bi, "png", baos);
+            baos.close();
+            byte[] image = baos.toByteArray();
+            ByteArrayInputStream bais = new ByteArrayInputStream(image);
+            String filename = String.format("Screenshot %s.png", df.format(new Date()));
+            
+            setImageWorking();
+            JSONObject drop = client.uploadFile(new CloudAppInputStream(bais, "image/png", filename, image.length));
+            String url = getDropUrl(drop);
+            System.out.println("Upload complete, URL:\n"+url);
+            setClipboard(url);
+            setImageNormal();
+            icon.displayMessage("Upload finished", String.format("Item: %s", filename), TrayIcon.MessageType.INFO);
+        } catch(IOException ex) {
+            System.out.println(ex);
+        } catch(CloudApiException ex) {
+            icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
         }
     }
     
