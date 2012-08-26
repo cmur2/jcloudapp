@@ -119,31 +119,31 @@ public class Main {
         icon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!working) { working = true; doScreen(); working = false; }
+                if(!working) { working = true; doScreenshot(); working = false; }
             }
         });
         
-        MenuItem screen = new MenuItem("Take screenshot");
+        MenuItem screen = new MenuItem("Take Screenshot");
         screen.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!working) { working = true; doScreen(); working = false; }
+                if(!working) { working = true; doScreenshot(); working = false; }
             }
         });
         
-        MenuItem uploadClip = new MenuItem("Upload from clipboard");
+        MenuItem uploadClip = new MenuItem("Upload from Clipboard");
         uploadClip.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!working) { working = true; doUploadClip(); working = false; }
+                if(!working) { working = true; doUploadClipboard(); working = false; }
             }
         });
         
-        MenuItem upload = new MenuItem("Upload...");
+        MenuItem upload = new MenuItem("Upload File...");
         upload.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!working) { working = true; doUpload(); working = false; }
+                if(!working) { working = true; doUploadFile(); working = false; }
             }
         });
         
@@ -176,7 +176,7 @@ public class Main {
         }
     }
     
-    public void doScreen() {
+    public void doScreenshot() {
         System.out.println("Taking screenshot...");
         BufferedImage bi = takeScreenshot();
         try {
@@ -202,7 +202,7 @@ public class Main {
     }
     
     @SuppressWarnings("unchecked")
-    public void doUploadClip() {
+    public void doUploadClipboard() {
         Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable t = cb.getContents(null);
         
@@ -232,6 +232,46 @@ public class Main {
         else if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
         	// TODO: clipboard string flavor
         }
+    }
+    
+    public void doUploadFile() {
+        FileDialog dlg = new FileDialog((Dialog)null, "Upload File...");
+        dlg.setVisible(true);
+        if(dlg.getDirectory() == null || dlg.getFile() == null) {
+            return;
+        }
+        File f = new File(dlg.getDirectory()+File.separator+dlg.getFile());
+        if(f.exists()) {
+            setImageWorking();
+            JSONObject drop = upload(f);
+            if(drop == null) { return; }
+            String url = getDropUrl(drop);
+            System.out.println("Upload complete, URL:\n"+url);
+            setClipboard(url);
+            setImageNormal();
+            icon.displayMessage("Upload finished", String.format("Item: %s", f.getName()), TrayIcon.MessageType.INFO);
+        }
+    }
+    
+    public void doAbout() {
+        String msg = "JCloudApp (C) 2011 Christian Nicolai\n\n"
+        + "Easy uploading of screenshots and files to CloudApp (tm) - cross-plattform.";
+        JOptionPane.showMessageDialog(null, msg, "About", JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public void doQuit() {
+        exit();
+    }
+    
+    private BufferedImage takeScreenshot() {
+        try {
+            Robot robot = new Robot();
+            Rectangle captureSize = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+            return robot.createScreenCapture(captureSize);
+        } catch(AWTException ex) {
+            System.out.println(ex);
+        }
+        return null;
     }
     
     private void uploadFilesFromClipboard(List<File> data) {
@@ -270,7 +310,7 @@ public class Main {
             icon.displayMessage("Upload finished", msg, TrayIcon.MessageType.INFO);
         }
     }
-    
+
     private void uploadImageFromClipboard(BufferedImage bi) {
     	try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -292,46 +332,6 @@ public class Main {
         } catch(CloudApiException ex) {
             icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
         }
-    }
-    
-    public void doUpload() {
-        FileDialog dlg = new FileDialog((Dialog)null, "Upload...");
-        dlg.setVisible(true);
-        if(dlg.getDirectory() == null || dlg.getFile() == null) {
-            return;
-        }
-        File f = new File(dlg.getDirectory()+File.separator+dlg.getFile());
-        if(f.exists()) {
-            setImageWorking();
-            JSONObject drop = upload(f);
-            if(drop == null) { return; }
-            String url = getDropUrl(drop);
-            System.out.println("Upload complete, URL:\n"+url);
-            setClipboard(url);
-            setImageNormal();
-            icon.displayMessage("Upload finished", String.format("Item: %s", f.getName()), TrayIcon.MessageType.INFO);
-        }
-    }
-    
-    public void doAbout() {
-        String msg = "JCloudApp (C) 2011 Christian Nicolai\n\n"
-        + "Easy uploading of screenshots and files to CloudApp (tm) - cross-plattform.";
-        JOptionPane.showMessageDialog(null, msg, "About", JOptionPane.INFORMATION_MESSAGE);
-    }
-    
-    public void doQuit() {
-        exit();
-    }
-    
-    private BufferedImage takeScreenshot() {
-        try {
-            Robot robot = new Robot();
-            Rectangle captureSize = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-            return robot.createScreenCapture(captureSize);
-        } catch(AWTException ex) {
-            System.out.println(ex);
-        }
-        return null;
     }
     
     private JSONObject upload(File file) {
