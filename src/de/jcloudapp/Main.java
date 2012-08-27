@@ -98,8 +98,23 @@ public class Main {
             showErrorDialog("Could not load images!\n"+ex);
             System.exit(1);
         }
-
-        Main app = new Main(URI.create("http://my.cl.ly:80/"));
+        
+        URI serviceUrl = URI.create("http://my.cl.ly:80/");
+        File storage = getStorageFile();
+        
+        if(storage.exists() && storage.isFile()) {
+            Yaml yaml = new Yaml();
+            try {
+                Map<String, String> m =
+                    (Map<String, String>) yaml.load(new FileInputStream(storage));
+                serviceUrl = URI.create(m.get("service_url"));
+            } catch(IOException ex) {
+                showErrorDialog("Loading settings from .cloudapp-cli failed: "+ex);
+                System.exit(1);
+            }
+        }
+        
+        Main app = new Main(serviceUrl);
         app.login(args);
         app.run();
     }
@@ -123,7 +138,7 @@ public class Main {
             exit();
         }
         
-        File storage = new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
+        File storage = getStorageFile();
         
         if(storage.exists() && storage.isFile()) {
             Yaml yaml = new Yaml();
@@ -515,6 +530,10 @@ public class Main {
             System.out.println(ex);
         }
         return null;
+    }
+    
+    private static File getStorageFile() {
+        return new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
     }
     
     private static void debug(JSONObject o) {
