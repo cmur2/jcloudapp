@@ -24,7 +24,7 @@
         <property name="lib.dir" value="libs"/>
         <property name="src.dir" value="src"/>
         
-        <property name="jcloudapp.version" value="0.0.1"/>
+        <property name="jcloudapp.version" value="0.9.1"/>
 
         <path id="classpath">
             <fileset dir="${lib.dir}">
