@@ -23,6 +23,8 @@
         <property name="misc.dir" value="misc"/>
         <property name="lib.dir" value="libs"/>
         <property name="src.dir" value="src"/>
+        
+        <property name="jcloudapp.version" value="0.0.1"/>
 
         <path id="classpath">
             <fileset dir="${lib.dir}">
@@ -86,13 +88,13 @@
                 <attribute name="Main-Class" value="de.jcloudapp.Main"/>
                 <attribute name="Class-Path" value="${manifest.class-path}"/>
                 
-                <attribute name="Implementation-Vendor" value="cn"/>
+                <attribute name="Implementation-Vendor" value="Christian Nicolai &lt;chrnicolai@gmail.com&gt;"/>
                 <attribute name="Implementation-Title" value="JCloudApp"/>
-                <attribute name="Implementation-Version" value="0.0.1"/>
+                <attribute name="Implementation-Version" value="${jcloudapp.version}"/>
             </manifest>
         </jar>
         
-        <zip destfile="${dist.dir}/jcloudapp.zip" duplicate="fail" compress="false">
+        <zip destfile="${dist.dir}/jcloudapp-${jcloudapp.version}.zip" duplicate="fail" compress="false">
             <!-- wrap into a subfolder for easier extraction -->
             <mappedresources>
                 <union>
