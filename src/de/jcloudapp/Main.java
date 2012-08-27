@@ -44,6 +44,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,7 +54,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -69,53 +75,33 @@ import com.cloudapp.rest.CloudAppInputStream;
 public class Main {
 
     private static final SimpleDateFormat df = (SimpleDateFormat) SimpleDateFormat.getInstance();
+
+    private static Image ImageNormal;
+    private static Image ImageWorking;
     
     static {
         df.applyPattern("yyyyMMdd-HHmmss");
     }
     
     public static void main(String[] args) throws Exception {
+        try {
+            // borrowed from https://github.com/cmur2/gloudapp
+            ImageNormal = ImageIO.read(Main.class.getResourceAsStream("gloudapp.png"));
+            ImageWorking = ImageIO.read(Main.class.getResourceAsStream("gloudapp_working.png"));
+        } catch(IOException ex) {
+            showErrorDialog("Could not load images!\n"+ex);
+            System.exit(1);
+        }
+
         Map<String, String> settings = getSettings(args);
-        
-        System.out.println(settings);
         
         Main m = new Main(settings.get(":username"), settings.get(":password"));
         m.run();
     }
     
-    @SuppressWarnings("unchecked")
-    private static Map<String, String> getSettings(String[] args) {
-        if(args.length == 2) {
-            HashMap<String, String> m = new HashMap<String, String>();
-            m.put(":username", args[0]);
-            m.put(":password", args[1]);
-            return m;
-        }
-        
-        File storage = new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
-        if(storage.exists() && storage.isFile()) {
-            Yaml yaml = new Yaml();
-            try {
-                Map<String, String> m =
-                    (Map<String, String>) yaml.load(new FileInputStream(storage));
-                return m;
-            } catch(IOException ex) {
-                showErrorDialog("Loading settings from .cloudapp-cli failed: "+ex);
-                System.exit(1);
-            }
-        }
-        
-        // TODO: show input dialog
-        
-        return null;
-    }
-    
     private CloudApi client;
     private TrayIcon icon;
     private boolean working = false;
-    
-    private Image imNormal;
-    private Image imWorking;
     
     public Main(String user, String pwd) {
         client = new CloudApi(user, pwd);
@@ -134,16 +120,7 @@ public class Main {
             exit();
         }
         
-        try {
-            // borrowed from https://github.com/cmur2/gloudapp
-            imNormal = ImageIO.read(Main.class.getResourceAsStream("gloudapp.png"));
-            imWorking = ImageIO.read(Main.class.getResourceAsStream("gloudapp_working.png"));
-        } catch(IOException ex) {
-            showErrorDialog("Could not load image!\n"+ex);
-            exit();
-        }
-        
-        icon = new TrayIcon(imNormal);
+        icon = new TrayIcon(ImageNormal);
         icon.setImageAutoSize(true);
         icon.setToolTip("JCloudApp");
         icon.addActionListener(new ActionListener() {
@@ -406,11 +383,11 @@ public class Main {
     }
     
     private void setImageNormal() {
-        icon.setImage(imNormal);
+        icon.setImage(ImageNormal);
     }
     
     private void setImageWorking() {
-        icon.setImage(imWorking);
+        icon.setImage(ImageWorking);
     }
     
     private void exit() {
@@ -421,6 +398,84 @@ public class Main {
     
     private static void showErrorDialog(String msg) {
         JOptionPane.showMessageDialog(null, msg, "JCloudApp - Error", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    private static Map<String,String> showLoginDialog(Icon icon) {
+        String message = ""; //"Welcome to JCloudApp!";
+        
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        JCheckBox remeberCheck = new JCheckBox("Remember login (on disk)");
+        remeberCheck.setSelected(true);
+        Object[] content = {
+            message,
+            "Username:",
+            usernameField,
+            "Password:",
+            passwordField,
+            remeberCheck
+        };
+        
+//        int res = JOptionPane.showOptionDialog(
+//            null, content, "JCloudApp - Login",
+//            JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon,
+//            null, usernameField);
+        int res = JOptionPane.showConfirmDialog(
+            null, content, "JCloudApp - Login",
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
+        
+        if(res == JOptionPane.OK_OPTION) {
+            HashMap<String, String> m = new HashMap<String, String>();
+            m.put(":username", usernameField.getText());
+            m.put(":password", new String(passwordField.getPassword()));
+            m.put(":remember", Boolean.toString(remeberCheck.isSelected()));
+            return m;
+        } else {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, String> getSettings(String[] args) {
+        if(args.length == 2) {
+            HashMap<String, String> m = new HashMap<String, String>();
+            m.put(":username", args[0]);
+            m.put(":password", args[1]);
+            return m;
+        }
+        
+        File storage = new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
+        
+        if(storage.exists() && storage.isFile()) {
+            Yaml yaml = new Yaml();
+            try {
+                Map<String, String> m =
+                    (Map<String, String>) yaml.load(new FileInputStream(storage));
+                return m;
+            } catch(IOException ex) {
+                showErrorDialog("Loading settings from .cloudapp-cli failed: "+ex);
+                System.exit(1);
+            }
+        }
+        
+        {
+            Map<String, String> m = showLoginDialog(new ImageIcon(ImageNormal));
+            if(m == null) {
+                System.exit(1);
+            }
+            boolean save = Boolean.parseBoolean(m.get(":remember"));
+            m.remove(":remember");
+            if(save) {
+                Yaml yaml = new Yaml();
+                try {
+                    yaml.dump(m, new FileWriter(storage));
+                } catch(IOException ex) {
+                    showErrorDialog("Saving settings to .cloudapp-cli failed: "+ex);
+                    //System.exit(1);
+                }
+            }
+            return m;
+        }
     }
     
     private static String getDropUrl(JSONObject drop) {
