@@ -46,6 +46,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -162,7 +163,7 @@ public class Main {
     }
     
     public boolean tryLogin(String user, String pwd) {
-        client = new CloudApi(user, pwd);
+        client = new CloudApi(user, pwd, URI.create("http://my.cl.ly:80/"));
         try {
             client.getItems(1, 1, null, false);
             return true;
@@ -256,12 +257,13 @@ public class Main {
             String url = getDropUrl(drop);
             System.out.println("Upload complete, URL:\n"+url);
             setClipboard(url);
-            setImageNormal();
             icon.displayMessage("Upload finished", String.format("Item: %s", filename), TrayIcon.MessageType.INFO);
         } catch(IOException ex) {
-            System.out.println(ex);
+            icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
         } catch(CloudApiException ex) {
             icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
+        } finally {
+            setImageNormal();
         }
     }
     
@@ -312,16 +314,18 @@ public class Main {
         if(dlg.getDirectory() == null || dlg.getFile() == null) {
             return;
         }
-        File f = new File(dlg.getDirectory()+File.separator+dlg.getFile());
+        File f = new File(dlg.getDirectory() + File.separator + dlg.getFile());
         if(f.exists()) {
             setImageWorking();
             JSONObject drop = upload(f);
-            if(drop == null) { return; }
-            String url = getDropUrl(drop);
-            System.out.println("Upload complete, URL:\n"+url);
-            setClipboard(url);
+            if(drop != null) {
+                String url = getDropUrl(drop);
+                System.out.println("Upload complete, URL:\n"+url);
+                setClipboard(url);
+                icon.displayMessage("Upload finished",
+                    String.format("Item: %s", f.getName()), TrayIcon.MessageType.INFO);
+            }
             setImageNormal();
-            icon.displayMessage("Upload finished", String.format("Item: %s", f.getName()), TrayIcon.MessageType.INFO);
         }
     }
     
@@ -353,7 +357,10 @@ public class Main {
             for(File f : data) {
                 JSONObject drop = upload(f);
                 // cancel all uploads on error
-                if(drop == null) { return; }
+                if(drop == null) {
+                    setImageNormal();
+                    return;
+                }
                 String url = getDropUrl(drop);
                 System.out.println("Upload complete, URL:\n"+url);
                 urls.add(url);
@@ -397,12 +404,13 @@ public class Main {
             String url = getDropUrl(drop);
             System.out.println("Upload complete, URL:\n"+url);
             setClipboard(url);
-            setImageNormal();
             icon.displayMessage("Upload finished", String.format("Item: %s", filename), TrayIcon.MessageType.INFO);
         } catch(IOException ex) {
-            System.out.println(ex);
+            icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
         } catch(CloudApiException ex) {
             icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
+        } finally {
+            setImageNormal();
         }
     }
     
@@ -416,12 +424,13 @@ public class Main {
             String url = getDropUrl(drop);
             System.out.println("Upload complete, URL:\n"+url);
             setClipboard(url);
-            setImageNormal();
             icon.displayMessage("Upload finished", String.format("Item: %s", filename), TrayIcon.MessageType.INFO);
         } catch(IOException ex) {
-            System.out.println(ex);
+            icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
         } catch(CloudApiException ex) {
             icon.displayMessage("Upload failed", ex.toString(), TrayIcon.MessageType.ERROR);
+        } finally {
+            setImageNormal();
         }
     }
     

@@ -59,14 +59,17 @@ public class CloudApi {
 
   private static final Logger LOGGER = Logger.getLogger("CloudApi");
 
+  private URI serviceUrl;
   private DefaultHttpClient client;
 
-  public CloudApi(String mail, String pw) {
+  public CloudApi(String mail, String pw, URI serviceUrl) {
+    this.serviceUrl = serviceUrl;
+    
     client = new DefaultHttpClient();
     client.setReuseStrategy(new DefaultConnectionReuseStrategy());
 
     // Try to authenticate.
-    AuthScope scope = new AuthScope("my.cl.ly", 80);
+    AuthScope scope = new AuthScope(serviceUrl.getHost(), serviceUrl.getPort());
     client.getCredentialsProvider().setCredentials(scope,
         new UsernamePasswordCredentials(mail, pw));
   }
@@ -99,7 +102,8 @@ public class CloudApi {
       nvps.add(new BasicNameValuePair("item[name]", name));
 
       // Prepare the request.
-      URI uri = URIUtils.createURI("http", "my.cl.ly", -1, "/items",
+      URI uri = URIUtils.createURI(serviceUrl.getScheme(),
+          serviceUrl.getHost(), serviceUrl.getPort(), "/items",
           URLEncodedUtils.format(nvps, "UTF-8"), null);
       request = new HttpPost(uri);
       request.setHeader("Accept", "application/json");
@@ -170,7 +174,7 @@ public class CloudApi {
     HttpPost uploadRequest = null;
     try {
       // Get a key for the file first.
-      keyRequest = new HttpGet("http://my.cl.ly/items/new");
+      keyRequest = new HttpGet(URIUtils.resolve(serviceUrl, "/items/new"));
       keyRequest.addHeader("Accept", "application/json");
 
       // Execute the request.
@@ -266,7 +270,8 @@ public class CloudApi {
       nvps.add(new BasicNameValuePair("deleted", (showDeleted) ? "true" : "false"));
 
       // Prepare the URI (the host and querystring.)
-      URI uri = URIUtils.createURI("http", "my.cl.ly", -1, "/items",
+      URI uri = URIUtils.createURI(serviceUrl.getScheme(),
+          serviceUrl.getHost(), serviceUrl.getPort(), "/items",
           URLEncodedUtils.format(nvps, "UTF-8"), null);
 
       // Prepare the request.
