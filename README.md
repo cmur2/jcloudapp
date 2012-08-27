@@ -2,11 +2,23 @@ JCloudApp
 =========
 
 JCloudApp is inspired by [GloudApp](https://github.com/cmur2/gloudapp) and
-provides similar feature set including taking screenshots and uploading files
-to [CloudApp](http://getcloudapp.com/) via a status or tray icon. It runs on
-all major platforms like Windows, Mac OS and Linux.
+provides a similar feature set including taking screenshots and uploading files
+to [CloudApp](http://getcloudapp.com/) via a status/tray icon. It runs on
+all major platforms like Windows, Mac OS X and Linux.
 
 **[Works with regenwolken](https://github.com/posativ/regenwolken)**
+
+Features
+--------
+
+* Take full screenshot and upload it
+* Upload content of clipboard:
+    * text
+    * files (e.g. copied from your file explorer)
+    * images (works well with "Snipping Tool" under Windows)
+* Upload file by file chooser dialog
+
+The resulting URL will always appear in your clipboard after finished upload.
 
 Install (deprecated)
 --------------------

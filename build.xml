@@ -18,6 +18,9 @@
 
     <target name="init">
         <property name="build.dir" value="bin"/>
+        <property name="dist.dir" value="dist"/>
+        <property name="dist.pass1.dir" value="${dist.dir}/pass1"/>
+        <property name="misc.dir" value="misc"/>
         <property name="lib.dir" value="libs"/>
         <property name="src.dir" value="src"/>
 
@@ -62,7 +65,56 @@
         </copy>
     </target>
     
+    <target name="dist" depends="init,build" description="Package application">
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.pass1.dir}"/>
+        
+        <!--
+            manifestclasspath uses the given jarfile to determine relative pathes
+            to the inner <classpath>, therefore we pass in a dummy.jar to obtain
+            pathes in the form "libs/foo.jar"
+            (http://www.rgagnon.com/javadetails/java-0587.html)
+        -->
+        <manifestclasspath property="manifest.class-path" jarfile="dummy.jar" maxParentLevels="0">
+            <classpath refid="classpath"/>
+        </manifestclasspath>
+        
+        
+        <jar jarfile="${dist.pass1.dir}/jcloudapp.jar" compress="false" strict="warn">
+            <fileset dir="${build.dir}"/>
+            <manifest>
+                <attribute name="Main-Class" value="de.jcloudapp.Main"/>
+                <attribute name="Class-Path" value="${manifest.class-path}"/>
+                
+                <attribute name="Implementation-Vendor" value="cn"/>
+                <attribute name="Implementation-Title" value="JCloudApp"/>
+                <attribute name="Implementation-Version" value="0.0.1"/>
+            </manifest>
+        </jar>
+        
+        <zip destfile="${dist.dir}/jcloudapp.zip" duplicate="fail" compress="false">
+            <!-- wrap into a subfolder for easier extraction -->
+            <mappedresources>
+                <union>
+                    <!-- include everything from 1th pass -->
+                    <fileset dir="${dist.pass1.dir}"/>
+                    <!-- pull in all libs -->
+                    <fileset dir="${basedir}">
+                        <include name="${lib.dir}/**"/>
+                    </fileset>
+                    <!-- some misc files -->
+                    <fileset dir="${misc.dir}">
+                        <include name="launch.bat"/>
+                        <include name="launch.sh"/>
+                    </fileset>
+                </union>
+                <globmapper from="*" to="jcloudapp/*"/>
+            </mappedresources>
+        </zip>
+    </target>
+    
     <target name="clean" depends="init" description="Removes build files">
         <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
     </target>
 </project>

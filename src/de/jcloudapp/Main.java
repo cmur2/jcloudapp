@@ -73,7 +73,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         if(args.length != 2) {
             showErrorDialog("Username and password should be given as command line arguments!\n"
-                + "Please add them in the 'run-classes' start script for your OS.");
+                + "Please add them in the 'launch' start script for your OS.");
             System.exit(1);
         }
         Main m = new Main(args[0], args[1]);
@@ -207,7 +207,7 @@ public class Main {
         Transferable t = cb.getContents(null);
         
         if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-        	try {
+            try {
         		List<File> data = (List<File>) 
         				t.getTransferData(DataFlavor.javaFileListFlavor);
         		uploadFilesFromClipboard(data);
