@@ -17,22 +17,27 @@ Features
     * files (e.g. copied from your file explorer)
     * images (works well with "Snipping Tool" under Windows)
 * Upload file by file chooser dialog
+* Save your login and share it nicely with [GloudApp](https://github.com/cmur2/gloudapp) and [cloudapp-cli](https://github.com/cmur2/cloudapp-cli)
 
 The resulting URL will always appear in your clipboard after finished upload.
 
-Install (deprecated)
---------------------
+Install
+-------
 
-JCloudApp needs no real installation just clone [this](https://github.com/cmur2/jcloudapp)
-repository and run in order to compile:
+[Download recent JCloudApp](https://github.com/cmur2/jcloudapp/downloads).
+Extract the archive. Double-click the `jcloudapp.jar` in the new *jcloudapp*
+directory. If this doesn't work, use one of the launch scripts for your platform.
+
+Compile
+-------
+
+Just clone JCloudApp from [this](https://github.com/cmur2/jcloudapp)
+repository and run in order to retrieve dependencies and compile:
 
     ant resolve build
 
-(All necessary libraries are shipped in the 'libs' directory of this repository.)
-
-To run JCloudApp use 'run-classes.sh' or 'run-classes.bat' depending on your OS.
-
-Pre-compiled downloads will follow soon for bigger releases.
+(You'll need [Apache Ivy](https://ant.apache.org/ivy/) that uses maven repositories
+to lookup and download dependencies.)
 
 Libraries
 ---------
