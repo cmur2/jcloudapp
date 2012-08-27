@@ -122,7 +122,7 @@ public class Main {
             try {
                 Map<String, String> m =
                     (Map<String, String>) yaml.load(new FileInputStream(storage));
-                if(tryLogin(m.get(":username"), m.get(":password"))) {
+                if(tryLogin(m.get("username"), m.get("password"))) {
                     return;
                 }
                 System.out.println("Credentials in ~/.cloudapp-cli are invalid!");
@@ -135,22 +135,26 @@ public class Main {
         {
             Map<String, String> res = showLoginDialog(new ImageIcon(ImageNormal));
             if(res == null) { exit(); }
-            boolean save = Boolean.parseBoolean(res.get(":remember"));
+            boolean save = Boolean.parseBoolean(res.get("remember"));
             if(save) {
                 Yaml yaml = new Yaml();
                 try {
                     // read, update, save the .cloudapp-cli
-                    Map<String, String> m =
-                        (Map<String, String>) yaml.load(new FileInputStream(storage));
-                    m.put(":username", res.get(":username"));
-                    m.put(":password", res.get(":password"));
+                    Map<String, String> m;
+                    if(storage.exists() && storage.isFile()) {
+                        m = (Map<String, String>) yaml.load(new FileInputStream(storage));
+                    } else {
+                        m = new HashMap<String, String>();
+                    }
+                    m.put("username", res.get("username"));
+                    m.put("password", res.get("password"));
                     yaml.dump(m, new FileWriter(storage));
                 } catch(IOException ex) {
                     showErrorDialog("Saving settings to .cloudapp-cli failed: "+ex);
                     //exit();
                 }
             }
-            if(tryLogin(res.get(":username"), res.get(":password"))) {
+            if(tryLogin(res.get("username"), res.get("password"))) {
                 return;
             }
             showErrorDialog("Login incorrect!");
@@ -479,9 +483,9 @@ public class Main {
         
         if(res == JOptionPane.OK_OPTION) {
             HashMap<String, String> m = new HashMap<String, String>();
-            m.put(":username", usernameField.getText());
-            m.put(":password", new String(passwordField.getPassword()));
-            m.put(":remember", Boolean.toString(remeberCheck.isSelected()));
+            m.put("username", usernameField.getText());
+            m.put("password", new String(passwordField.getPassword()));
+            m.put("remember", Boolean.toString(remeberCheck.isSelected()));
             return m;
         } else {
             return null;
