@@ -83,6 +83,7 @@ public class Main {
         m.run();
     }
     
+    @SuppressWarnings("unchecked")
     private static Map<String, String> getSettings(String[] args) {
         if(args.length == 2) {
             HashMap<String, String> m = new HashMap<String, String>();
