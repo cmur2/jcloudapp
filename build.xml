@@ -100,14 +100,16 @@
                 <union>
                     <!-- include everything from 1th pass -->
                     <fileset dir="${dist.pass1.dir}"/>
-                    <!-- pull in all libs -->
+                    <!-- pull in all libs (without sources!) -->
                     <fileset dir="${basedir}">
                         <include name="${lib.dir}/**"/>
+                        <exclude name="${lib.dir}/**-source.jar"/>
                     </fileset>
                     <!-- some misc files -->
                     <fileset dir="${misc.dir}">
                         <include name="launch.bat"/>
                         <include name="launch.sh"/>
+                        <include name="3rd-party/**"/>
                     </fileset>
                 </union>
                 <globmapper from="*" to="jcloudapp/*"/>
