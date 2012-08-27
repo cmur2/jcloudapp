@@ -208,32 +208,33 @@ public class Main {
         
         if(t.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
             try {
-        		List<File> data = (List<File>) 
-        				t.getTransferData(DataFlavor.javaFileListFlavor);
-        		uploadFilesFromClipboard(data);
-        		return;
-        	} catch(UnsupportedFlavorException ex) {
+                List<File> data = (List<File>) 
+                        t.getTransferData(DataFlavor.javaFileListFlavor);
+                uploadFilesFromClipboard(data);
+                return;
+            } catch(UnsupportedFlavorException ex) {
                 return;
             } catch(IOException ex) {
                 return;
+                
             }
         }
         else if(t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-        	try {
-        		Image data = (Image) t.getTransferData(DataFlavor.imageFlavor);
-        		BufferedImage bi = (BufferedImage) data;
-        		uploadImageFromClipboard(bi);
-        	} catch(UnsupportedFlavorException ex) {
+            try {
+                Image data = (Image) t.getTransferData(DataFlavor.imageFlavor);
+                BufferedImage bi = (BufferedImage) data;
+                uploadImageFromClipboard(bi);
+            } catch(UnsupportedFlavorException ex) {
                 return;
             } catch(IOException ex) {
                 return;
             }
         }
         else if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-        	try {
-        		String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-        		uploadStringFromClipboard(data);
-        	} catch(UnsupportedFlavorException ex) {
+            try {
+                String data = (String) t.getTransferData(DataFlavor.stringFlavor);
+                uploadStringFromClipboard(data);
+            } catch(UnsupportedFlavorException ex) {
                 return;
             } catch(IOException ex) {
                 return;
@@ -282,7 +283,7 @@ public class Main {
     }
     
     private void uploadFilesFromClipboard(List<File> data) {
-    	if(data != null && data.size() > 0) {
+        if(data != null && data.size() > 0) {
             setImageWorking();
             ArrayList<String> urls = new ArrayList<String>();
             for(File f : data) {
@@ -319,7 +320,7 @@ public class Main {
     }
 
     private void uploadImageFromClipboard(BufferedImage bi) {
-    	try {
+        try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(bi, "png", baos);
             baos.close();
@@ -342,11 +343,11 @@ public class Main {
     }
     
     private void uploadStringFromClipboard(String s) {
-    	try {
-    		ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("utf-8"));
-    		String filename = String.format("Snippet %s.txt", df.format(new Date()));
-    		
-    		setImageWorking();
+        try {
+            ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("utf-8"));
+            String filename = String.format("Snippet %s.txt", df.format(new Date()));
+            
+            setImageWorking();
             JSONObject drop = client.uploadFile(new CloudAppInputStream(bais, "text/plain", filename, bais.available()));
             String url = getDropUrl(drop);
             System.out.println("Upload complete, URL:\n"+url);
