@@ -43,17 +43,21 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import com.cloudapp.rest.CloudApi;
 import com.cloudapp.rest.CloudApiException;
@@ -71,13 +75,38 @@ public class Main {
     }
     
     public static void main(String[] args) throws Exception {
-        if(args.length != 2) {
-            showErrorDialog("Username and password should be given as command line arguments!\n"
-                + "Please add them in the 'launch' start script for your OS.");
-            System.exit(1);
-        }
-        Main m = new Main(args[0], args[1]);
+        Map<String, String> settings = getSettings(args);
+        
+        System.out.println(settings);
+        
+        Main m = new Main(settings.get(":username"), settings.get(":password"));
         m.run();
+    }
+    
+    private static Map<String, String> getSettings(String[] args) {
+        if(args.length == 2) {
+            HashMap<String, String> m = new HashMap<String, String>();
+            m.put(":username", args[0]);
+            m.put(":password", args[1]);
+            return m;
+        }
+        
+        File storage = new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
+        if(storage.exists() && storage.isFile()) {
+            Yaml yaml = new Yaml();
+            try {
+                Map<String, String> m =
+                    (Map<String, String>) yaml.load(new FileInputStream(storage));
+                return m;
+            } catch(IOException ex) {
+                showErrorDialog("Loading settings from .cloudapp-cli failed: "+ex);
+                System.exit(1);
+            }
+        }
+        
+        // TODO: show input dialog
+        
+        return null;
     }
     
     private CloudApi client;
