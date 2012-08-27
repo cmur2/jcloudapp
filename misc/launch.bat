@@ -2,7 +2,7 @@
 
 @setlocal
 
-rem username and password here in the form "ARGS=user pass":
+rem username and password here in the form ARGS="user pass":
 set ARGS=
 
 set DARGS=-Xms16m -Xmx64m -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel

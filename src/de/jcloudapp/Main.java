@@ -93,28 +93,81 @@ public class Main {
             System.exit(1);
         }
 
-        Map<String, String> settings = getSettings(args);
-        
-        Main m = new Main(settings.get(":username"), settings.get(":password"));
-        m.run();
+        Main app = new Main();
+        app.login(args);
+        app.run();
     }
     
     private CloudApi client;
     private TrayIcon icon;
     private boolean working = false;
     
-    public Main(String user, String pwd) {
-        client = new CloudApi(user, pwd);
+    public Main() {
     }
-    
-    public void run() {
-        try {
-            client.getItems(1, 1, null, false);
-        } catch(CloudApiException ex) {
+
+    @SuppressWarnings("unchecked")
+    private void login(String[] args) {
+        if(args.length == 2) {
+            if(tryLogin(args[0], args[1])) {
+                return;
+            }
             showErrorDialog("Login incorrect!");
             exit();
         }
         
+        File storage = new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
+        
+        if(storage.exists() && storage.isFile()) {
+            Yaml yaml = new Yaml();
+            try {
+                Map<String, String> m =
+                    (Map<String, String>) yaml.load(new FileInputStream(storage));
+                if(tryLogin(m.get(":username"), m.get(":password"))) {
+                    return;
+                }
+                System.out.println("Credentials in ~/.cloudapp-cli are invalid!");
+            } catch(IOException ex) {
+                showErrorDialog("Loading settings from .cloudapp-cli failed: "+ex);
+                exit();
+            }
+        }
+        
+        {
+            Map<String, String> res = showLoginDialog(new ImageIcon(ImageNormal));
+            if(res == null) { exit(); }
+            boolean save = Boolean.parseBoolean(res.get(":remember"));
+            if(save) {
+                Yaml yaml = new Yaml();
+                try {
+                    // read, update, save the .cloudapp-cli
+                    Map<String, String> m =
+                        (Map<String, String>) yaml.load(new FileInputStream(storage));
+                    m.put(":username", res.get(":username"));
+                    m.put(":password", res.get(":password"));
+                    yaml.dump(m, new FileWriter(storage));
+                } catch(IOException ex) {
+                    showErrorDialog("Saving settings to .cloudapp-cli failed: "+ex);
+                    //exit();
+                }
+            }
+            if(tryLogin(res.get(":username"), res.get(":password"))) {
+                return;
+            }
+            showErrorDialog("Login incorrect!");
+        }
+    }
+    
+    public boolean tryLogin(String user, String pwd) {
+        client = new CloudApi(user, pwd);
+        try {
+            client.getItems(1, 1, null, false);
+            return true;
+        } catch(CloudApiException ex) {
+            return false;
+        }
+    }
+    
+    public void run() {
         if(!SystemTray.isSupported()) {
             showErrorDialog("SystemTray is unsupported!");
             exit();
@@ -432,49 +485,6 @@ public class Main {
             return m;
         } else {
             return null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Map<String, String> getSettings(String[] args) {
-        if(args.length == 2) {
-            HashMap<String, String> m = new HashMap<String, String>();
-            m.put(":username", args[0]);
-            m.put(":password", args[1]);
-            return m;
-        }
-        
-        File storage = new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
-        
-        if(storage.exists() && storage.isFile()) {
-            Yaml yaml = new Yaml();
-            try {
-                Map<String, String> m =
-                    (Map<String, String>) yaml.load(new FileInputStream(storage));
-                return m;
-            } catch(IOException ex) {
-                showErrorDialog("Loading settings from .cloudapp-cli failed: "+ex);
-                System.exit(1);
-            }
-        }
-        
-        {
-            Map<String, String> m = showLoginDialog(new ImageIcon(ImageNormal));
-            if(m == null) {
-                System.exit(1);
-            }
-            boolean save = Boolean.parseBoolean(m.get(":remember"));
-            m.remove(":remember");
-            if(save) {
-                Yaml yaml = new Yaml();
-                try {
-                    yaml.dump(m, new FileWriter(storage));
-                } catch(IOException ex) {
-                    showErrorDialog("Saving settings to .cloudapp-cli failed: "+ex);
-                    //System.exit(1);
-                }
-            }
-            return m;
         }
     }
     
