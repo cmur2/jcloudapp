@@ -80,6 +80,9 @@ public class Main {
     private static Image ImageNormal;
     private static Image ImageWorking;
     
+    private static Icon IconNormal;
+    private static Icon IconLarge;
+    
     static {
         df.applyPattern("yyyyMMdd-HHmmss");
     }
@@ -89,21 +92,25 @@ public class Main {
             // borrowed from https://github.com/cmur2/gloudapp
             ImageNormal = ImageIO.read(Main.class.getResourceAsStream("gloudapp.png"));
             ImageWorking = ImageIO.read(Main.class.getResourceAsStream("gloudapp_working.png"));
+            IconNormal = new ImageIcon(ImageNormal.getScaledInstance(64, 64, Image.SCALE_SMOOTH));
+            IconLarge = new ImageIcon(ImageNormal);
         } catch(IOException ex) {
             showErrorDialog("Could not load images!\n"+ex);
             System.exit(1);
         }
 
-        Main app = new Main();
+        Main app = new Main(URI.create("http://my.cl.ly:80/"));
         app.login(args);
         app.run();
     }
     
+    private URI serviceUrl;
     private CloudApi client;
     private TrayIcon icon;
     private boolean working = false;
     
-    public Main() {
+    public Main(URI serviceUrl) {
+        this.serviceUrl = serviceUrl;
     }
 
     @SuppressWarnings("unchecked")
@@ -134,7 +141,7 @@ public class Main {
         }
         
         {
-            Map<String, String> res = showLoginDialog(new ImageIcon(ImageNormal));
+            Map<String, String> res = showLoginDialog();
             if(res == null) { exit(); }
             boolean save = Boolean.parseBoolean(res.get("remember"));
             if(save) {
@@ -163,7 +170,7 @@ public class Main {
     }
     
     public boolean tryLogin(String user, String pwd) {
-        client = new CloudApi(user, pwd, URI.create("http://my.cl.ly:80/"));
+        client = new CloudApi(user, pwd, serviceUrl);
         try {
             client.getItems(1, 1, null, false);
             return true;
@@ -332,7 +339,7 @@ public class Main {
     public void doAbout() {
         String msg = "JCloudApp (C) 2011 Christian Nicolai\n\n"
         + "Easy uploading of screenshots and files to CloudApp (tm) - cross-plattform.";
-        JOptionPane.showMessageDialog(null, msg, "About", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, msg, "About", JOptionPane.INFORMATION_MESSAGE, IconNormal);
     }
     
     public void doQuit() {
@@ -466,7 +473,7 @@ public class Main {
         JOptionPane.showMessageDialog(null, msg, "JCloudApp - Error", JOptionPane.ERROR_MESSAGE);
     }
     
-    private static Map<String,String> showLoginDialog(Icon icon) {
+    private static Map<String,String> showLoginDialog() {
         String message = ""; //"Welcome to JCloudApp!";
         
         JTextField usernameField = new JTextField();
@@ -488,7 +495,7 @@ public class Main {
 //            null, usernameField);
         int res = JOptionPane.showConfirmDialog(
             null, content, "JCloudApp - Login",
-            JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
+            JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, IconLarge);
         
         if(res == JOptionPane.OK_OPTION) {
             HashMap<String, String> m = new HashMap<String, String>();
