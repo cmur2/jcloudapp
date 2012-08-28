@@ -206,7 +206,7 @@ public class Main {
         icon.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!working) { working = true; doScreenshot(); working = false; }
+                if(!working) { working = true; doUploadClipboard(); working = false; }
             }
         });
         
@@ -290,7 +290,7 @@ public class Main {
     }
     
     @SuppressWarnings("unchecked")
-    public void doUploadClipboard() {
+    public boolean doUploadClipboard() {
         Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable t = cb.getContents(null);
         
@@ -299,13 +299,10 @@ public class Main {
                 List<File> data = (List<File>) 
                         t.getTransferData(DataFlavor.javaFileListFlavor);
                 uploadFilesFromClipboard(data);
-                return;
             } catch(UnsupportedFlavorException ex) {
-                return;
             } catch(IOException ex) {
-                return;
-                
             }
+            return true;
         }
         else if(t.isDataFlavorSupported(DataFlavor.imageFlavor)) {
             try {
@@ -313,21 +310,20 @@ public class Main {
                 BufferedImage bi = (BufferedImage) data;
                 uploadImageFromClipboard(bi);
             } catch(UnsupportedFlavorException ex) {
-                return;
             } catch(IOException ex) {
-                return;
             }
+            return true;
         }
         else if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
             try {
                 String data = (String) t.getTransferData(DataFlavor.stringFlavor);
                 uploadStringFromClipboard(data);
             } catch(UnsupportedFlavorException ex) {
-                return;
             } catch(IOException ex) {
-                return;
             }
+            return true;
         }
+        return false;
     }
     
     public void doUploadFile() {

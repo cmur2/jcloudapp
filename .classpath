@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="libs/commons-codec-1.4-jar.jar" sourcepath="libs/commons-codec-1.4-source.jar" sources="libs/commons-codec-1.4-source.jar"/>
-	<classpathentry kind="lib" path="libs/commons-logging-1.1.1-jar.jar" sourcepath="libs/commons-logging-1.1.1-source.jar"/>
-	<classpathentry kind="lib" path="libs/httpclient-4.1.2-jar.jar" sourcepath="libs/httpclient-4.1.2-source.jar"/>
-	<classpathentry kind="lib" path="libs/httpcore-4.1.2-jar.jar" sourcepath="libs/httpcore-4.1.2-source.jar"/>
-	<classpathentry kind="lib" path="libs/httpmime-4.1.2-jar.jar" sourcepath="libs/httpmime-4.1.2-source.jar"/>
-	<classpathentry kind="lib" path="libs/snakeyaml-1.10-bundle.jar" sourcepath="snakeyaml-1.10-source.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin"/>
+    <classpathentry kind="src" path="src"/>
+    <classpathentry kind="lib" path="libs/commons-codec-1.4-jar.jar" sourcepath="libs/commons-codec-1.4-source.jar" sources="libs/commons-codec-1.4-source.jar"/>
+    <classpathentry kind="lib" path="libs/commons-logging-1.1.1-jar.jar" sourcepath="libs/commons-logging-1.1.1-source.jar"/>
+    <classpathentry kind="lib" path="libs/httpclient-4.1.2-jar.jar" sourcepath="libs/httpclient-4.1.2-source.jar"/>
+    <classpathentry kind="lib" path="libs/httpcore-4.1.2-jar.jar" sourcepath="libs/httpcore-4.1.2-source.jar"/>
+    <classpathentry kind="lib" path="libs/httpmime-4.1.2-jar.jar" sourcepath="libs/httpmime-4.1.2-source.jar"/>
+    <classpathentry kind="lib" path="libs/snakeyaml-1.10-bundle.jar" sourcepath="snakeyaml-1.10-source.jar"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+    <classpathentry kind="output" path="bin"/>
 </classpath>
