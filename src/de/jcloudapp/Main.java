@@ -85,13 +85,10 @@ public class Main {
     private static Icon IconNormal;
     private static Icon IconLarge;
     
-    // TODO: allow HTTPS services
     // TODO: select used service/preferences pane
     // TODO: allow to register with service
     // TODO: choose different java namespace
     // TODO: integrate https://github.com/jgraichen/JSnipper (rlly cool!)
-    // TODO: play sound on finished upload
-    // TODO: recognize URLs in clipboard, make them a bookmark
     // TODO: keep up with https://github.com/simong/CloudAppJava progress
     // TODO: show upload progress on large files
     // TODO: show users recent items
@@ -498,6 +495,9 @@ public class Main {
     private void setClipboard(String s) {
         Clipboard cb = Toolkit.getDefaultToolkit().getSystemClipboard();
         cb.setContents(new StringSelection(s), null);
+        
+        // designated use, alert user when he could finally use the URL
+        Toolkit.getDefaultToolkit().beep();
     }
     
     private void setImageNormal() {
