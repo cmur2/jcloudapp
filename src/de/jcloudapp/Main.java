@@ -83,6 +83,19 @@ public class Main {
     private static Icon IconNormal;
     private static Icon IconLarge;
     
+    // TODO: allow HTTPS services
+    // TODO: select used service/preferences pane
+    // TODO: allow to register with service
+    // TODO: choose different java namespace
+    // TODO: integrate https://github.com/jgraichen/JSnipper (rlly cool!)
+    // TODO: play sound on finished upload
+    // TODO: recognize URLs in clipboard, make them a bookmark
+    // TODO: keep up with https://github.com/simong/CloudAppJava progress
+    // TODO: show upload progress on large files
+    // TODO: show users recent items
+    // TODO: let user choose the default action of the icon itself
+    // TODO: auto-upload files from a certain folder esp. for OSX
+    
     static {
         df.applyPattern("yyyyMMdd-HHmmss");
     }
