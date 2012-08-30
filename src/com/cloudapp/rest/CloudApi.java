@@ -26,15 +26,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.FileNameMap;
-import java.net.URLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
@@ -44,11 +51,16 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -65,7 +77,24 @@ public class CloudApi {
   public CloudApi(String mail, String pw, URI serviceUrl) {
     this.serviceUrl = serviceUrl;
     
-    client = new DefaultHttpClient();
+    // SSL sucks
+    SchemeRegistry schemeRegistry = SchemeRegistryFactory.createDefault();
+    try {
+      TrustManager tm = new X509TrustManager() { 
+        public X509Certificate[] getAcceptedIssuers() { return null; }
+        public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+        public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+      };
+      SSLContext sslContext = SSLContext.getInstance("SSL");
+      sslContext.init(null, new TrustManager[] { tm }, null);
+      SSLSocketFactory ssf = new SSLSocketFactory(sslContext);
+      ssf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+      schemeRegistry.register(new Scheme("https", 443, ssf));
+    } catch(NoSuchAlgorithmException ex) {
+    } catch(KeyManagementException ex) {
+    }
+    
+    client = new DefaultHttpClient(new SingleClientConnManager(schemeRegistry));
     client.setReuseStrategy(new DefaultConnectionReuseStrategy());
 
     // Try to authenticate.
