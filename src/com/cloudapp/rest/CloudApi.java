@@ -63,6 +63,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,6 +98,7 @@ public class CloudApi {
     
     client = new DefaultHttpClient(new SingleClientConnManager(schemeRegistry));
     client.setReuseStrategy(new DefaultConnectionReuseStrategy());
+    HttpProtocolParams.setUserAgent(client.getParams(), "Wolke/7.0");
 
     // Try to authenticate.
     AuthScope scope = new AuthScope(serviceUrl.getHost(), serviceUrl.getPort());
