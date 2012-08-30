@@ -47,6 +47,8 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -330,7 +332,11 @@ public class Main {
         else if(t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
             try {
                 String data = (String) t.getTransferData(DataFlavor.stringFlavor);
-                uploadStringFromClipboard(data);
+                if(isValidURL(data)) {
+                    createBookmarkFromClipboard(data);
+                } else {
+                    uploadStringFromClipboard(data);
+                }
             } catch(UnsupportedFlavorException ex) {
             } catch(IOException ex) {
             }
@@ -445,6 +451,21 @@ public class Main {
         }
     }
     
+    private void createBookmarkFromClipboard(String s) {
+        try {
+            setImageWorking();
+            JSONObject drop = client.createBookmark("bookmark", s);
+            String url = getDropUrl(drop);
+            System.out.println("Upload complete, URL:\n"+url);
+            setClipboard(url);
+            icon.displayMessage("Bookmark created", String.format("Item: %s", s), TrayIcon.MessageType.INFO);
+        } catch(CloudApiException ex) {
+            icon.displayMessage("Bookmark failed", ex.toString(), TrayIcon.MessageType.ERROR);
+        } finally {
+            setImageNormal();
+        }
+    }
+    
     private void uploadStringFromClipboard(String s) {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(s.getBytes("utf-8"));
@@ -543,6 +564,15 @@ public class Main {
     
     private static File getStorageFile() {
         return new File(System.getProperty("user.home") + File.separatorChar + ".cloudapp-cli");
+    }
+    
+    private static boolean isValidURL(String url) {
+        try {
+            new URI(url);
+            return true;
+        } catch(URISyntaxException ex) {
+            return false;
+        }
     }
     
     private static void debug(JSONObject o) {
