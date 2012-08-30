@@ -41,9 +41,10 @@
 
     <target name="report" depends="init,resolve" description="Dependency report">
         <ivy:report xsl="true"
+                todir="${build.dir}"
                 outputpattern="[organisation]-[module]-[conf]-report.[ext]"
                 conf="default"
-                organisation="de.jcloudapp"
+                organisation="de.mycrobase"
                 module="jcloudapp"/>
     </target>
     
@@ -85,7 +86,7 @@
         <jar jarfile="${dist.pass1.dir}/jcloudapp.jar" compress="false" strict="warn">
             <fileset dir="${build.dir}"/>
             <manifest>
-                <attribute name="Main-Class" value="de.jcloudapp.Main"/>
+                <attribute name="Main-Class" value="de.mycrobase.jcloudapp.Main"/>
                 <attribute name="Class-Path" value="${manifest.class-path}"/>
                 
                 <attribute name="Implementation-Vendor" value="Christian Nicolai &lt;chrnicolai@gmail.com&gt;"/>

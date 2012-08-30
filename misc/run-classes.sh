@@ -5,6 +5,6 @@ ARGS=
 
 CLASSPATH="bin/:libs/*"
 DARGS="-Xms16m -Xmx64m -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel"
-MAINCLASS="de.jcloudapp.Main"
+MAINCLASS="de.mycrobase.jcloudapp.Main"
 
 java -cp $CLASSPATH $DARGS $MAINCLASS $ARGS

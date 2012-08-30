@@ -7,7 +7,7 @@ set ARGS=
 
 set CLASSPATH=bin/;libs/*
 set DARGS=-Xms16m -Xmx64m -Dswing.defaultlaf=com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel
-set MAINCLASS=de.jcloudapp.Main
+set MAINCLASS=de.mycrobase.jcloudapp.Main
 
 start javaw -cp %CLASSPATH% %DARGS% %MAINCLASS% %ARGS%
 

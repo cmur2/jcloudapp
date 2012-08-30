@@ -19,7 +19,7 @@
  * information.
  */
 
-package de.jcloudapp;
+package de.mycrobase.jcloudapp;
 
 import java.awt.AWTException;
 import java.awt.Dialog;
@@ -87,7 +87,6 @@ public class Main {
     
     // TODO: select used service/preferences pane
     // TODO: allow to register with service
-    // TODO: choose different java namespace
     // TODO: integrate https://github.com/jgraichen/JSnipper (rlly cool!)
     // TODO: keep up with https://github.com/simong/CloudAppJava progress
     // TODO: show upload progress on large files
