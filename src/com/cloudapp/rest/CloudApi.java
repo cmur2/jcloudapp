@@ -54,6 +54,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.StringBody;
@@ -123,19 +124,13 @@ public class CloudApi {
       JSONObject bodyObj = new JSONObject();
       bodyObj.put("item", item);
       String body = bodyObj.toString(2);
-      System.out.println(bodyObj.toString(2));
-
-      // Prepare the parameters
-      List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-      nvps.add(new BasicNameValuePair("item[redirect_url]", url));
-      nvps.add(new BasicNameValuePair("item[name]", name));
 
       // Prepare the request.
       URI uri = URIUtils.createURI(serviceUrl.getScheme(),
-          serviceUrl.getHost(), serviceUrl.getPort(), "/items",
-          URLEncodedUtils.format(nvps, "UTF-8"), null);
+          serviceUrl.getHost(), serviceUrl.getPort(), "/items", null, null);
       request = new HttpPost(uri);
       request.setHeader("Accept", "application/json");
+      request.setEntity(new StringEntity(body));
 
       // Fire it
       HttpResponse response = client.execute(request);
