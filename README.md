@@ -18,8 +18,8 @@ The resulting URL will always appear in your clipboard after finished upload.
 
 ## Install
 
-Make sure you have Java JRE installed.
-[Download recent JCloudApp](https://github.com/cmur2/jcloudapp/downloads).
+Make sure you have Java (JRE) installed.
+[Download a recent JCloudApp](https://github.com/cmur2/jcloudapp/releases).
 Extract the archive.
 Double-click the `jcloudapp.jar` in the new *jcloudapp* directory. If this doesn't work, use one of the launch scripts for your platform.
 
