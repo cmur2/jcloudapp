@@ -366,7 +366,7 @@ public class Main {
     }
     
     public void doAbout() {
-        String msg = "JCloudApp 1.0 (C) 2012 Christian Nicolai\n\n"
+        String msg = "JCloudApp 1.1.0 (C) 2012 Christian Nicolai\n\n"
         + "Easy uploading of screenshots and files to CloudApp (tm) - cross-plattform.";
         JOptionPane.showMessageDialog(null, msg, "About", JOptionPane.INFORMATION_MESSAGE, IconNormal);
     }
