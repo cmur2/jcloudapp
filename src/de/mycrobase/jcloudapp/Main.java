@@ -118,7 +118,10 @@ public class Main {
             try {
                 Map<String, String> m =
                     (Map<String, String>) yaml.load(new FileInputStream(storage));
-                serviceUrl = URI.create(m.get("service_url"));
+                // avoid NPE by implicitly assuming the presence of a service URL
+                if(m.containsKey("service_url")) {
+                    serviceUrl = URI.create(m.get("service_url"));
+                }
             } catch(IOException ex) {
                 showErrorDialog("Loading settings from .cloudapp-cli failed: "+ex);
                 System.exit(1);
